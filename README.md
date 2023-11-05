@@ -12,7 +12,32 @@ npm ci
 打開 package.json 檔案
 ```
 "bin": {
-    "ts-cli": "dist/index.js"
+    "tscli": "./dist/src/index.js"
   },
 ```
-修改 ts-cli 成為你想要的名稱
+修改 tscli 成為你想要的名稱
+
+# 編譯專案內的 .ts 檔案
+會更新到 dist 目錄內
+```bash=
+tsc
+```
+
+# 原始程式碼連結安裝
+```
+npm link
+```
+這個指令將會幫助你把這個資料夾放進你的全域node module 中，
+這樣你就不用部署到 npm 上就能直接使用。
+
+# 原始程式碼連結解安裝
+ts-cli 是 package.json 檔案 name 的欄位內容
+```
+npm unlink ts-cli
+```
+
+# CLI 範例測試
+tscli 是 package.json 檔案 bin 的欄位內容
+```
+tscli -n 1234
+```

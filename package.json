@@ -1,7 +1,7 @@
 {
-  "name": "ts-test",
+  "name": "ts-cli",
   "version": "1.0.0",
-  "description": "TypeScript 測試",
+  "description": "ts-cli 用 TypeScript 打造的第一个命令行工具",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest"
@@ -10,9 +10,17 @@
     "type": "git",
     "url": "git+ssh://git@github.com/chiisen/ts-test.git"
   },
+  "bin": {
+    "tscli": "dist/index.js"
+  },
   "keywords": [
     "TypeScript",
-    "ts"
+    "ts",
+    "cli",
+    "commander",
+    "command",
+    "command line",
+    "console"
   ],
   "author": "Sam",
   "license": "MIT",

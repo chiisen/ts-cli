@@ -23,6 +23,11 @@ npm ci
 tsc
 ```
 
+# 開啟監聽 ts 文件自動編譯
+```bash=
+tsc -w
+```
+
 # 原始程式碼連結安裝
 ```
 npm link

@@ -44,5 +44,5 @@ npm unlink ts-cli
 # CLI 範例測試
 tscli 是 package.json 檔案 bin 的欄位內容
 ```
-tscli -n 1234
+tscli -d 1234
 ```

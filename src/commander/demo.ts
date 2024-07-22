@@ -9,7 +9,7 @@ export function commanderDemo(opts) {
   }
   try {
     if (opts) {
-      console.log("you ordered:" + opts)
+      console.log("you ordered: " + opts)
     } else {
       console.log("沒有 demo 參數內容")
     }

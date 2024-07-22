@@ -8,6 +8,12 @@ ts-cli 用 TypeScript 打造的第一个命令行工具
 npm ci
 ```
 
+# 安裝 ts-node
+ts-node 是一個工具，它允許您直接運行 TypeScript 代碼而無需事先將其編譯為 JavaScript。這樣可以加快開發速度並簡化工作流程，特別是在開發和測試時。
+```bash=
+npm install -g ts-node
+```
+
 # CLI 名稱修改
 打開 package.json 檔案
 ```
@@ -17,8 +23,8 @@ npm ci
 ```
 修改 tscli 成為你想要的名稱
 
-# 編譯專案內的 .ts 檔案
-會更新到 dist 目錄內
+# 🔅編譯專案內的 .ts 檔案
+🔅會更新到 dist 目錄內
 ```bash=
 tsc
 ```

@@ -1,5 +1,7 @@
 import { readFileSync, writeFileSync } from "fs"
 import { format } from "date-fns"
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 /**
  * 更新 appapi 的 DEV 環境版號
@@ -13,13 +15,14 @@ export function commanderUpdateVersion(replaceValue: string): void {
   try {
     var replace = replaceValue.trim()
     if (replace) {
+      process.env.UPDATE_PATH
       // 將 filePath 變數改為一個陣列，包含多個檔案路徑
       const filePaths = [
-        "C:/royal/gitlab/yaml/DEV/thirdparty_wallet/DEV/h1/appapi/appapi-deployment.yaml",
-        "C:/royal/gitlab/yaml/DEV/thirdparty_wallet/DEV/h1/appapi/appapi-schedule.yaml",
-        "C:/royal/gitlab/yaml/DEV/thirdparty_wallet/DEV/h1/appapi-xf/appapi-xf-deployment.yaml",
-        "C:/royal/gitlab/yaml/DEV/thirdparty_wallet/DEV/h1/appapi-kline/appapi-kline-deployment.yaml",
-        "C:/royal/gitlab/yaml/DEV/thirdparty_wallet/DEV/h1/appapi-asia/appapi-asia-deployment.yaml",
+        `${process.env.UPDATE_PATH}appapi/appapi-deployment.yaml`,
+        `${process.env.UPDATE_PATH}appapi/appapi-schedule.yaml`,
+        `${process.env.UPDATE_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+        `${process.env.UPDATE_PATH}appapi-kline/appapi-kline-deployment.yaml`,
+        `${process.env.UPDATE_PATH}appapi-asia/appapi-asia-deployment.yaml`,
         // 可以繼續添加更多檔案路徑
       ]
       // 使用迴圈遍歷每個檔案路徑

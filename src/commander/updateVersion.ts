@@ -1,30 +1,48 @@
 import { readFileSync, writeFileSync } from "fs"
 import { format } from "date-fns"
-import * as dotenv from 'dotenv';
-dotenv.config();
+import * as dotenv from "dotenv"
+dotenv.config()
+import { exec } from "child_process"
+import * as path from "path"
 
 /**
  * 更新 appapi 的 DEV 環境版號
  * @param opts
  * @returns
  */
-export function commanderUpdateVersion(replaceValue: string): void {
-  if (replaceValue === undefined) {
+export async function commanderUpdateVersion(environment: string): Promise<void> {
+  if (environment === undefined) {
     return
   }
   try {
-    var replace = replaceValue.trim()
-    if (replace) {
-      process.env.UPDATE_PATH
+    var env = environment.trim()
+    if (env) {
       // 將 filePath 變數改為一個陣列，包含多個檔案路徑
-      const filePaths = [
-        `${process.env.UPDATE_PATH}appapi/appapi-deployment.yaml`,
-        `${process.env.UPDATE_PATH}appapi/appapi-schedule.yaml`,
-        `${process.env.UPDATE_PATH}appapi-xf/appapi-xf-deployment.yaml`,
-        `${process.env.UPDATE_PATH}appapi-kline/appapi-kline-deployment.yaml`,
-        `${process.env.UPDATE_PATH}appapi-asia/appapi-asia-deployment.yaml`,
-        // 可以繼續添加更多檔案路徑
-      ]
+      let filePaths = []
+      if (env.toLowerCase() === "dev") {
+        filePaths = [
+          `${process.env.UPDATE_DEV_PATH}appapi/appapi-deployment.yaml`,
+          `${process.env.UPDATE_DEV_PATH}appapi/appapi-schedule.yaml`,
+          `${process.env.UPDATE_DEV_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${process.env.UPDATE_DEV_PATH}appapi-kline/appapi-kline-deployment.yaml`,
+          `${process.env.UPDATE_DEV_PATH}appapi-asia/appapi-asia-deployment.yaml`,
+          // 可以繼續添加更多檔案路徑
+        ]
+        // 呼叫函數並指定路徑
+        await updateAndContinue(process.env.UPDATE_DEV_PATH)
+      } else {
+        filePaths = [
+          `${process.env.UPDATE_UAT_PATH}appapi/h1-appapi-deployment.yaml`,
+          `${process.env.UPDATE_UAT_PATH}appapi/h1-appapi-schedule.yaml`,
+          `${process.env.UPDATE_UAT_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${process.env.UPDATE_UAT_PATH}appapi-kline/h1-appapi-kline-deployment.yaml`,
+          `${process.env.UPDATE_UAT_PATH}appapi-asia/h1-appapi-asia-deployment.yaml`,
+          // 可以繼續添加更多檔案路徑
+        ]
+        // 呼叫函數並指定路徑
+        await updateAndContinue(process.env.UPDATE_UAT_PATH)
+      }
+
       // 使用迴圈遍歷每個檔案路徑
       filePaths.forEach((filePath) => {
         // 在這裡對每個檔案執行修改操作
@@ -36,7 +54,7 @@ export function commanderUpdateVersion(replaceValue: string): void {
 
         const contentArray = content.split("\n")
         contentArray.forEach((line, index) => {
-          const searchValue = findMatchingContent(line)
+          const searchValue = findMatchingContent(env, line)
           if (searchValue) {
             console.log("找到了: " + searchValue)
 
@@ -44,7 +62,12 @@ export function commanderUpdateVersion(replaceValue: string): void {
             const today = format(new Date(), "yyyyMMdd")
 
             // 使用正則表達式匹配 h1-appapi:DEV 後面跟隨的日期
-            const regex = /(h1-appapi:DEV)(\d{8})-(\d+)/
+            let regex
+            if (env.toLowerCase() === "dev") {
+              regex = /(h1-appapi:DEV)(\d{8})-(\d+)/
+            } else {
+              regex = /(h1-appapi:UAT)(\d{8})-(\d+)/
+            }
             const match = line.match(regex)
 
             if (match && match[2] !== today) {
@@ -85,9 +108,14 @@ function incrementVersionInString(foundString: string): string {
 }
 
 // 從一行文字中找到匹配的字符串
-function findMatchingContent(line: string): string | null {
+function findMatchingContent(env: string, line: string): string | null {
   // 修改正則表達式以匹配行中的任何位置
-  const regex = /h1-appapi:DEV\d{8}-\d+/
+  let regex
+  if (env.toLowerCase() === "dev") {
+    regex = /(h1-appapi:DEV)(\d{8})-(\d+)/
+  } else {
+    regex = /(h1-appapi:UAT)(\d{8})-(\d+)/
+  }
 
   // 使用 match 方法尋找匹配的內容
   const matches = line.match(regex)
@@ -98,5 +126,40 @@ function findMatchingContent(line: string): string | null {
   } else {
     // 如果沒有找到匹配，返回 null
     return null
+  }
+}
+
+// 修改 fetchLatestGitUpdate 函數以返回 Promise
+function fetchLatestGitUpdate(directoryPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // 確保路徑是絕對的
+    const fullPath = path.resolve(directoryPath)
+
+    // 使用指定的目錄路徑作為工作目錄來執行 git pull
+    exec("git pull", { cwd: fullPath }, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`執行時出錯: ${error}`)
+        reject(error)
+        return
+      }
+      if (stdout) {
+        console.log(`標準輸出: ${stdout}`)
+      }
+      if (stderr) {
+        console.log(`錯誤輸出: ${stderr}`)
+      }
+      resolve()
+    })
+  })
+}
+
+// 確定執行完 git pull
+async function updateAndContinue(directoryPath: string) {
+  try {
+    await fetchLatestGitUpdate(directoryPath)
+    // 在這裡繼續後續操作
+    console.log("git pull 完成，現在繼續後續操作...")
+  } catch (error) {
+    console.error("無法完成 git pull", error)
   }
 }

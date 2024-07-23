@@ -14,9 +14,6 @@ export function hello(name: string): string {
   return `Hello ${name}`
 }
 
-let message: string = "Hello, World!"
-console.log(message)
-
 async function run() {
   const program = new Command()
 

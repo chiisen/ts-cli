@@ -15,6 +15,10 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
     return
   }
   try {
+    if (process.env.UPDATE_DEV_PATH === undefined || process.env.UPDATE_UAT_PATH === undefined) {
+      console.error(".env 檔案中未設定 UPDATE_DEV_PATH 和 UPDATE_UAT_PATH 環境變數。")
+      return
+    }
     var env = environment.trim()
     if (env) {
       // 將 filePath 變數改為一個陣列，包含多個檔案路徑

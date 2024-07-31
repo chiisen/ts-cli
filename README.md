@@ -40,6 +40,7 @@ tsc -w
 ```
 
 # 原始程式碼連結安裝
+⭐程式碼異動，都必須先移除連結再重新安裝。  
 ```shell
 npm link
 ```
@@ -47,6 +48,7 @@ npm link
 這樣你就不用部署到 npm 上就能直接使用。
 
 # 原始程式碼連結解安裝
+⭐程式碼異動，都必須先移除連結再重新安裝。  
 ts-cli 是 package.json 檔案 name 的欄位內容
 ```shell
 npm unlink ts-cli

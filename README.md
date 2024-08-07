@@ -68,6 +68,12 @@ npm install ts-morph
 tscli -a 1
 ```
 
+# 安裝 Redis 套件
+```shell
+npm install redis @types/redis
+```
+讓 -u 支持 Redis 查詢
+
 # git commit message
 - 常用描述
 ```

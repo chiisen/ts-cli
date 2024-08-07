@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
-      "args": ["src/index.ts", "-a 1"],
+      "args": ["src/index.ts", "-u DEV"],
       "cwd": "${workspaceRoot}"
     }
   ]

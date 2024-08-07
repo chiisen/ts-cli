@@ -4,6 +4,7 @@ import * as dotenv from "dotenv"
 dotenv.config()
 import { exec } from "child_process"
 import * as path from "path"
+import { createClient } from "redis"
 
 /**
  * 更新 appapi 的 DEV 環境版號
@@ -15,9 +16,27 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
     return
   }
   try {
+    var UPDATE_DEV_PATH = ""
+    var UPDATE_UAT_PATH = ""
+
     if (process.env.UPDATE_DEV_PATH === undefined || process.env.UPDATE_UAT_PATH === undefined) {
       console.error(".env 檔案中未設定 UPDATE_DEV_PATH 和 UPDATE_UAT_PATH 環境變數。")
-      return
+
+      // 使用範例
+      await readRedisKeyAsJson("ts-cli:env")
+        .then((data) => {
+          console.log("Data:", data)
+          UPDATE_DEV_PATH = data.UPDATE_DEV_PATH
+          UPDATE_UAT_PATH = data.UPDATE_UAT_PATH
+        })
+        .catch((error) => {
+          console.error("Error:", error)
+          return
+        })
+    }
+    else{
+      UPDATE_DEV_PATH = process.env.UPDATE_DEV_PATH
+      UPDATE_UAT_PATH = process.env.UPDATE_UAT_PATH
     }
     var env = environment.trim()
     if (env) {
@@ -25,22 +44,22 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
       let filePaths = []
       if (env.toLowerCase() === "dev") {
         filePaths = [
-          `${process.env.UPDATE_DEV_PATH}appapi/appapi-deployment.yaml`,
-          `${process.env.UPDATE_DEV_PATH}appapi/appapi-schedule.yaml`,
-          `${process.env.UPDATE_DEV_PATH}appapi-xf/appapi-xf-deployment.yaml`,
-          `${process.env.UPDATE_DEV_PATH}appapi-kline/appapi-kline-deployment.yaml`,
-          `${process.env.UPDATE_DEV_PATH}appapi-asia/appapi-asia-deployment.yaml`,
+          `${UPDATE_DEV_PATH}appapi/appapi-deployment.yaml`,
+          `${UPDATE_DEV_PATH}appapi/appapi-schedule.yaml`,
+          `${UPDATE_DEV_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${UPDATE_DEV_PATH}appapi-kline/appapi-kline-deployment.yaml`,
+          `${UPDATE_DEV_PATH}appapi-asia/appapi-asia-deployment.yaml`,
           // 可以繼續添加更多檔案路徑
         ]
         // 呼叫函數並指定路徑
         await updateAndContinue(process.env.UPDATE_DEV_PATH)
       } else {
         filePaths = [
-          `${process.env.UPDATE_UAT_PATH}appapi/h1-appapi-deployment.yaml`,
-          `${process.env.UPDATE_UAT_PATH}appapi/h1-appapi-schedule.yaml`,
-          `${process.env.UPDATE_UAT_PATH}appapi-xf/appapi-xf-deployment.yaml`,
-          `${process.env.UPDATE_UAT_PATH}appapi-kline/h1-appapi-kline-deployment.yaml`,
-          `${process.env.UPDATE_UAT_PATH}appapi-asia/h1-appapi-asia-deployment.yaml`,
+          `${UPDATE_UAT_PATH}appapi/h1-appapi-deployment.yaml`,
+          `${UPDATE_UAT_PATH}appapi/h1-appapi-schedule.yaml`,
+          `${UPDATE_UAT_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${UPDATE_UAT_PATH}appapi-kline/h1-appapi-kline-deployment.yaml`,
+          `${UPDATE_UAT_PATH}appapi-asia/h1-appapi-asia-deployment.yaml`,
           // 可以繼續添加更多檔案路徑
         ]
         // 呼叫函數並指定路徑
@@ -165,5 +184,32 @@ async function updateAndContinue(directoryPath: string) {
     console.log("git pull 完成，現在繼續後續操作...")
   } catch (error) {
     console.error("無法完成 git pull", error)
+  }
+}
+
+/**
+ * 
+ * @param key 查詢 Redis 的 key
+ * @returns 
+ */
+async function readRedisKeyAsJson(key: string): Promise<any> {
+  const client = createClient()
+
+  client.on("error", (err) => console.log("Redis Client Error", err))
+
+  await client.connect()
+
+  try {
+    const value = await client.get(key)
+    if (value) {
+      return JSON.parse(value)
+    } else {
+      throw new Error(`Key ${key} does not exist`)
+    }
+  } catch (error) {
+    console.error("Error reading key from Redis:", error)
+    throw error
+  } finally {
+    await client.disconnect()
   }
 }

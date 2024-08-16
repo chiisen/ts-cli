@@ -16,18 +16,18 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
     return
   }
   try {
-    var UPDATE_DEV_PATH = ""
-    var UPDATE_UAT_PATH = ""
+    var var_UPDATE_DEV_PATH = ""
+    var var_UPDATE_UAT_PATH = ""
 
     if (process.env.UPDATE_DEV_PATH === undefined || process.env.UPDATE_UAT_PATH === undefined) {
       console.error(".env 檔案中未設定 UPDATE_DEV_PATH 和 UPDATE_UAT_PATH 環境變數。")
 
       // 使用範例
       await readRedisKeyAsJson("ts-cli:env")
-        .then((data) => {
-          console.log("Data:", data)
-          UPDATE_DEV_PATH = data.UPDATE_DEV_PATH
-          UPDATE_UAT_PATH = data.UPDATE_UAT_PATH
+        .then((redis_data) => {
+          console.log("Data:", redis_data)
+          var_UPDATE_DEV_PATH = redis_data.UPDATE_DEV_PATH
+          var_UPDATE_UAT_PATH = redis_data.UPDATE_UAT_PATH
         })
         .catch((error) => {
           console.error("Error:", error)
@@ -35,8 +35,8 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
         })
     }
     else{
-      UPDATE_DEV_PATH = process.env.UPDATE_DEV_PATH
-      UPDATE_UAT_PATH = process.env.UPDATE_UAT_PATH
+      var_UPDATE_DEV_PATH = process.env.UPDATE_DEV_PATH
+      var_UPDATE_UAT_PATH = process.env.UPDATE_UAT_PATH
     }
     var env = environment.trim()
     if (env) {
@@ -44,26 +44,26 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
       let filePaths = []
       if (env.toLowerCase() === "dev") {
         filePaths = [
-          `${UPDATE_DEV_PATH}appapi/appapi-deployment.yaml`,
-          `${UPDATE_DEV_PATH}appapi/appapi-schedule.yaml`,
-          `${UPDATE_DEV_PATH}appapi-xf/appapi-xf-deployment.yaml`,
-          `${UPDATE_DEV_PATH}appapi-kline/appapi-kline-deployment.yaml`,
-          `${UPDATE_DEV_PATH}appapi-asia/appapi-asia-deployment.yaml`,
+          `${var_UPDATE_DEV_PATH}appapi/appapi-deployment.yaml`,
+          `${var_UPDATE_DEV_PATH}appapi/appapi-schedule.yaml`,
+          `${var_UPDATE_DEV_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${var_UPDATE_DEV_PATH}appapi-kline/appapi-kline-deployment.yaml`,
+          `${var_UPDATE_DEV_PATH}appapi-asia/appapi-asia-deployment.yaml`,
           // 可以繼續添加更多檔案路徑
         ]
         // 呼叫函數並指定路徑
-        await updateAndContinue(process.env.UPDATE_DEV_PATH)
+        await updateAndContinue(var_UPDATE_DEV_PATH)
       } else {
         filePaths = [
-          `${UPDATE_UAT_PATH}appapi/h1-appapi-deployment.yaml`,
-          `${UPDATE_UAT_PATH}appapi/h1-appapi-schedule.yaml`,
-          `${UPDATE_UAT_PATH}appapi-xf/appapi-xf-deployment.yaml`,
-          `${UPDATE_UAT_PATH}appapi-kline/h1-appapi-kline-deployment.yaml`,
-          `${UPDATE_UAT_PATH}appapi-asia/h1-appapi-asia-deployment.yaml`,
+          `${var_UPDATE_UAT_PATH}appapi/h1-appapi-deployment.yaml`,
+          `${var_UPDATE_UAT_PATH}appapi/h1-appapi-schedule.yaml`,
+          `${var_UPDATE_UAT_PATH}appapi-xf/appapi-xf-deployment.yaml`,
+          `${var_UPDATE_UAT_PATH}appapi-kline/h1-appapi-kline-deployment.yaml`,
+          `${var_UPDATE_UAT_PATH}appapi-asia/h1-appapi-asia-deployment.yaml`,
           // 可以繼續添加更多檔案路徑
         ]
         // 呼叫函數並指定路徑
-        await updateAndContinue(process.env.UPDATE_UAT_PATH)
+        await updateAndContinue(var_UPDATE_UAT_PATH)
       }
 
       // 使用迴圈遍歷每個檔案路徑
@@ -122,7 +122,11 @@ export async function commanderUpdateVersion(environment: string): Promise<void>
   }
 }
 
-// 將版本號加 1 的函數
+/**
+ * 將版本號加 1 的函數
+ * @param foundString 
+ * @returns 
+ */
 function incrementVersionInString(foundString: string): string {
   return foundString.replace(/-(\d+)$/, (match, num) => {
     const incrementedNum = parseInt(num, 10) + 1
@@ -130,7 +134,12 @@ function incrementVersionInString(foundString: string): string {
   })
 }
 
-// 從一行文字中找到匹配的字符串
+/**
+ * 從一行文字中找到匹配的字符串
+ * @param env 
+ * @param line 
+ * @returns 
+ */
 function findMatchingContent(env: string, line: string): string | null {
   // 修改正則表達式以匹配行中的任何位置
   let regex
@@ -152,7 +161,11 @@ function findMatchingContent(env: string, line: string): string | null {
   }
 }
 
-// 修改 fetchLatestGitUpdate 函數以返回 Promise
+/**
+ * 修改 fetchLatestGitUpdate 函數以返回 Promise
+ * @param directoryPath 
+ * @returns 
+ */
 function fetchLatestGitUpdate(directoryPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     // 確保路徑是絕對的
@@ -176,7 +189,10 @@ function fetchLatestGitUpdate(directoryPath: string): Promise<void> {
   })
 }
 
-// 確定執行完 git pull
+/**
+ * 確定執行完 git pull
+ * @param directoryPath 
+ */
 async function updateAndContinue(directoryPath: string) {
   try {
     await fetchLatestGitUpdate(directoryPath)

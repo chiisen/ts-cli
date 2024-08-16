@@ -19,7 +19,7 @@ async function run() {
   const program = new Command()
 
   program
-    .version("1.0.0")
+    .version("1.0.1")
     .option("-d, --demo <number>", "Demo 把輸入數值加 5")
     .option("-u, --updateVersion <string>", "更新 appapi 的 DEV 環境版號")
     .option("-a, --ast <string>", "abstract syntax tree")

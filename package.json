@@ -1,9 +1,13 @@
 {
-  "name": "ts-cli",
+  "name": "lanren-ts-cli",
   "version": "1.0.0",
   "description": "ts-cli 用 TypeScript 打造的第一个命令行工具",
   "main": "dist/src/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {

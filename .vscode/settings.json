@@ -1,0 +1,9 @@
+{
+    // 控制在檔案總管中要隱藏的檔案或目錄
+    "files.exclude": {
+        "**/dist": true, // 隱藏編譯後的輸出目錄
+        "**/node_modules": true, // 隱藏依賴套件目錄
+        "**/.git": true, // 隱藏 Git 版控目錄
+        "**/.DS_Store": true // 隱藏 macOS 的系統檔案
+    }
+}

@@ -1,89 +1,119 @@
-# ts-cli
-ts-cli 用 TypeScript 打造的第一个命令行工具
+# 🚀 ts-cli
+這是一個使用 **TypeScript** 打造的強大命令行工具 (CLI)。  
+參考 [ts-test](https://github.com/chiisen/ts-test) 專案結構，為您提供最佳的 TypeScript 開發體驗。
 
-參考 [ts-test](https://github.com/chiisen/ts-test) 建立 TypeScript 專案
-
-# 初始安裝
+## 📦 初始安裝 (Initialization)
+首先，請安裝專案所需的依賴套件：
 ```shell
 npm ci
 ```
 
-# 安裝 ts-node
-ts-node 是一個工具，它允許您直接運行 TypeScript 代碼而無需事先將其編譯為 JavaScript。這樣可以加快開發速度並簡化工作流程，特別是在開發和測試時。
+## 🛠️ 開發環境設定 (Development Setup)
+
+### 1. 安裝 ts-node
+`ts-node` 是開發的神器，讓您無需編譯即可直接運行 TypeScript 代碼，大幅提升開發與測試效率。
 ```shell
 npm install -g ts-node
 ```
 
-# 安裝 .env 設定檔案
+### 2. 環境變數設定 (.env)
+本專案支援 `.env` 配置，請安裝 `dotenv`：
 ```shell
 npm install dotenv
 ```
 
-# CLI 名稱修改
-打開 package.json 檔案
+### 3. 自定義 CLI 命令名稱
+想要改個更有個性的命令名稱嗎？請開啟 `package.json` 並修改 `bin` 欄位：
 ```json
 "bin": {
     "tscli": "./dist/src/index.js"
   },
 ```
-修改 tscli 成為你想要的名稱
+將 `"tscli"` 修改為您喜歡的指令名稱即可！
 
-# 🔅編譯專案內的 .ts 檔案
-🔅會更新到 dist 目錄內
+---
+
+## � 編譯與監聽 (Building & Watching)
+
+### �🔅 編譯專案 (.ts -> .js)
+將 TypeScript 原始碼編譯至 `dist` 目錄：
 ```shell
 tsc
 ```
 
-# 開啟監聽 ts 文件自動編譯
+### 👀 自動監聽編譯 (Watch Mode)
+開啟監聽模式，檔案更動時會自動重新編譯，開發更流暢：
 ```shell
 tsc -w
 ```
 
-# 原始程式碼連結安裝
-⭐程式碼異動，都必須先移除連結再重新安裝。  
+---
+
+## 🔗 本地連結與測試 (Local Linking)
+
+### 🟢 建立連結 (npm link)
+將此專案連結到全域 node_modules，讓您不需發佈到 npm 也能直接在終端機呼叫指令：
 ```shell
 npm link
 ```
-這個指令將會幫助你把這個資料夾放進你的全域node module 中，
-這樣你就不用部署到 npm 上就能直接使用。
+> ⭐ **注意**：若程式碼有異動，雖然 `npm link` 通常會即時反映，但在某些情況下（如 bin 映射變更），可能需要重新連結。
 
-# 原始程式碼連結解安裝
-⭐程式碼異動，都必須先移除連結再重新安裝。  
-ts-cli 是 package.json 檔案 name 的欄位內容
+### 🔴 移除連結 (npm unlink)
+若需移除全域連結 (其中 `ts-cli` 為 `package.json` 中的 `name` 欄位)：
 ```shell
 npm unlink ts-cli
 ```
 
-# CLI 範例測試
-tscli 是 package.json 檔案 bin 的欄位內容
+---
+
+## 📂 專案結構說明 (Project Structure)
+以下是專案中主要檔案與目錄的用途說明，協助您快速上手：
+
+### 核心目錄
+- **`src/`**：TypeScript 原始碼目錄，所有的 CLI 邏輯與功能實作都在這裡。
+- **`dist/`**：編譯後的 JavaScript 檔案輸出目錄 (執行 `npm run build` 或 `tsc` 後產生)。
+- **`test/`**：單元測試檔案存放處 (使用 Jest 框架)。
+
+### 設定檔案
+- **`package.json`**：專案核心，定義了專案依賴 (dependencies)、腳本 (scripts) 與 CLI 設定 (bin)。
+- **`tsconfig.json`**：TypeScript 編譯器設定檔，定義編譯選項與路徑映射。
+- **`jest.config.js`**：Jest 測試框架設定檔。
+- **`.env`**：環境變數設定檔，用於存放敏感資訊或環境參數。
+
+### 輔助工具
+- **`install.ps1`**：PowerShell 腳本，方便 Windows 使用者快速全域安裝此 CLI。
+- **`reinstall.bat`**：批次檔，用於快速清理並重新安裝專案依賴。
+
+---
+
+## 🚀 CLI 使用範例 (Usage)
+假設您的 CLI 指令名稱為 `tscli` (對應 `package.json` 的 `bin` 設定)：
+
+### 測試指令
 ```shell
 tscli -d 1234
 ```
 
-# abstract syntax tree
+### AST (Abstract Syntax Tree) 測試
+若需使用 AST 功能，請先安裝 `ts-morph`：
 ```shell
 npm install ts-morph
 ```
+執行測試：
 ```shell
 tscli -a 1
 ```
 
-# 安裝 Redis 套件
+### Redis 支援
+安裝 Redis 套件以啟用 `-u` 參數查詢功能：
 ```shell
 npm install redis @types/redis
 ```
-讓 -u 支持 Redis 查詢
 
-# git commit message
-- 常用描述
-```
-✨ feat: 需求功能描述
-🐛 fix: 修正 bug 的問題描述
-💄 optimize: 最佳化程式碼或功能流程
-🔧 chore: 雜事，例如: 調整設定檔案等等 
-```
+---
 
-# 安裝 ts-cli 到全域
-```
+## 🌏 一鍵全域安裝 (Global Install Script)
+我們提供了一個 PowerShell 腳本，協助您快速將 `ts-cli` 安裝至全域環境：
+```powershell
 .\install.ps1
 ```

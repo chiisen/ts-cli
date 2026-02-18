@@ -1,6 +1,6 @@
 {
-  "name": "lanren-ts-cli",
-  "version": "1.0.0",
+  "name": "ts-cli",
+  "version": "1.0.1",
   "description": "ts-cli 用 TypeScript 打造的第一个命令行工具",
   "main": "dist/src/index.js",
   "files": [
